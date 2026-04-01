@@ -1,5 +1,7 @@
 # dependencies
-/node_modules
+**/node_modules
+**/.next
+dashboard/.env.local
 /.pnp
 .pnp.*
 .yarn/*
@@ -40,3 +42,4 @@ next-env.d.ts
 
 # data
 /data/*.json
+

@@ -1,0 +1,8 @@
+{
+    "id": "arkclaw-diagnosis",
+    "configSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+    }
+}
