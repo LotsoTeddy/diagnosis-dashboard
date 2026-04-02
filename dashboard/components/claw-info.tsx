@@ -5,34 +5,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { Report } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
-const LOG_LEVEL_COLORS: Record<string, string> = {
-  FATAL: "text-red-600",
-  ERROR: "text-red-500",
-  WARN: "text-yellow-600",
-  INFO: "text-blue-600",
-  DEBUG: "text-gray-500",
-  TRACE: "text-gray-400",
-}
-
 const MENU = [
   { key: "config", label: "OpenClaw 配置" },
   { key: "sessions", label: "会话历史" },
   { key: "logs", label: "日志" },
 ] as const
 
-function LogEntry({ entry }: { entry: Record<string, unknown> }) {
-  const meta = entry._meta as Record<string, unknown> | undefined
-  const level = (meta?.logLevelName as string) || "INFO"
-  const time = (entry.time as string) || ""
-  const message = (entry["1"] as string) || JSON.stringify(entry)
-  const color = LOG_LEVEL_COLORS[level] || "text-foreground"
+function LogEntry({ raw }: { raw: string }) {
+  let color = "text-foreground"
+  if (/"logLevelName"\s*:\s*"ERROR"/i.test(raw) || /"logLevelName"\s*:\s*"FATAL"/i.test(raw)) {
+    color = "text-red-500"
+  } else if (/"logLevelName"\s*:\s*"WARN"/i.test(raw) || /"logLevelName"\s*:\s*"WARNING"/i.test(raw)) {
+    color = "text-yellow-600"
+  }
 
   return (
-    <div className={cn("text-xs px-2 py-0.5 rounded flex gap-2", color)}>
-      {time && <span className="text-muted-foreground shrink-0">{time.replace(/T/, " ").replace(/\+.*/, "")}</span>}
-      <span className={cn("shrink-0 font-bold w-12", color)}>{level}</span>
-      <span className="break-all">{message}</span>
-    </div>
+    <pre className={cn("text-xs px-2 py-0.5 rounded whitespace-pre-wrap break-all", color)}>
+      {raw}
+    </pre>
   )
 }
 
@@ -97,9 +87,10 @@ export function ClawInfo({ report }: { report: Report }) {
                 <CardHeader><CardTitle className="text-base ">{l.name}</CardTitle></CardHeader>
                 <CardContent>
                   <div className="max-h-[500px] overflow-auto space-y-0.5">
-                    {l.entries.map((entry, i) => (
-                      <LogEntry key={i} entry={entry as Record<string, unknown>} />
-                    ))}
+                    {l.entries.map((entry, i) => {
+                      const raw = typeof entry === "string" ? entry : JSON.stringify(entry)
+                      return <LogEntry key={i} raw={raw} />
+                    })}
                   </div>
                 </CardContent>
               </Card>
