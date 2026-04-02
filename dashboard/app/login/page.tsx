@@ -1,99 +1,54 @@
-import { signIn } from "@/lib/auth";
-import { FileText, AlertCircle } from "lucide-react";
-import { redirect } from "next/navigation";
+"use client"
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string }>;
-}) {
-  const params = await searchParams;
-  const error = params.error;
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+
+export default function LoginPage() {
+  const [error, setError] = useState("")
+  const router = useRouter()
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const form = new FormData(e.currentTarget)
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: form.get("username"),
+        password: form.get("password"),
+      }),
+    })
+    if (res.ok) window.location.href = "/"
+    else setError("用户名或密码错误")
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="max-w-md w-full space-y-8 p-8">
-        <div className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="h-16 w-16 rounded-lg bg-primary/10 flex items-center justify-center">
-              <FileText className="h-10 w-10 text-primary" />
+    <div className="min-h-screen flex items-center justify-center">
+      <Card className="w-[360px]">
+        <CardHeader>
+          <CardTitle>登录诊断看板</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={onSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">用户名</Label>
+              <Input id="username" name="username" required />
             </div>
-          </div>
-          <h2 className="text-3xl font-bold tracking-tight">ArkClaw 诊断系统</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            请登录以访问诊断报告
-          </p>
-        </div>
-
-        <div className="mt-8">
-          <form
-            action={async (formData: FormData) => {
-              "use server";
-              const username = formData.get("username") as string;
-              const password = formData.get("password") as string;
-
-              try {
-                const result = await signIn("credentials", {
-                  username,
-                  password,
-                  redirectTo: "/",
-                });
-              } catch (error: any) {
-                if (error.type === "CredentialsSignin") {
-                  redirect("/login?error=invalid");
-                }
-                throw error;
-              }
-            }}
-            className="space-y-4"
-          >
-            {error && (
-              <div className="flex items-center gap-2 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
-                <AlertCircle className="h-4 w-4" />
-                <span>用户名或密码错误，请重试</span>
-              </div>
-            )}
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium mb-2">
-                用户名
-              </label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                required
-                className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                placeholder="请输入用户名"
-              />
+            <div className="space-y-2">
+              <Label htmlFor="password">密码</Label>
+              <Input id="password" name="password" type="password" required />
             </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2">
-                密码
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                placeholder="请输入密码"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full flex justify-center items-center gap-3 py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
-            >
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            <Button type="submit" className="w-full">
               登录
-            </button>
+            </Button>
           </form>
-        </div>
-
-        <div className="mt-6 text-center">
-          <p className="text-xs text-muted-foreground">
-            登录即表示您同意使用本诊断系统
-          </p>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
-  );
+  )
 }
