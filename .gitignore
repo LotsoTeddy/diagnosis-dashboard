@@ -43,3 +43,5 @@ next-env.d.ts
 # data
 /data/*.json
 
+**/.omc
+**/data

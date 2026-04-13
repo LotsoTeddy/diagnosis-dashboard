@@ -34,7 +34,7 @@ data = {
     ],
     "logs": [
         {"name": os.path.basename(f), "entries": [json.loads(l) for l in open(f) if l.strip()]}
-        for f in sorted(glob.glob("/tmp/openclaw/openclaw-*.log"))
+        for f in sorted(glob.glob("/tmp/openclaw/openclaw-*.log"))[-1:]
     ],
     "history": open(f"{home}/.bash_history").read().strip().split("\n")[-100:] if os.path.exists(f"{home}/.bash_history") else [],
 }

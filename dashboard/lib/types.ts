@@ -8,3 +8,13 @@ export interface Report {
   history: string[]
   createdAt: string
 }
+
+export interface ReportSummary {
+  id: string
+  instanceCreatedAt: string
+  createdAt: string
+  sessionCount: number
+  logCount: number
+}
+
+export type ReportSection = "env" | "config" | "sessions" | "logs" | "history"

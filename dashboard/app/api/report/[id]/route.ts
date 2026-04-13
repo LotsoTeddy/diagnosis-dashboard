@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getReport } from "@/lib/store"
+import { getReportMeta } from "@/lib/store"
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const report = getReport(id)
-  if (!report) return NextResponse.json({ error: "Not found" }, { status: 404 })
-  return NextResponse.json(report)
+  const meta = getReportMeta(id)
+  if (!meta) return NextResponse.json({ error: "Not found" }, { status: 404 })
+  return NextResponse.json(meta)
 }

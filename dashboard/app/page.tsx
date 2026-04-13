@@ -1,11 +1,11 @@
 import { LogoutButton } from "@/components/logout-button";
 import { ReportList } from "@/components/report-list";
-import { getReports } from "@/lib/store";
+import { getReportList } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
 export default function HomePage() {
-    const reports = getReports();
+    const reports = getReportList();
 
     return (
         <div className="max-w-5xl mx-auto p-6">

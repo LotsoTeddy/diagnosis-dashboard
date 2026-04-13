@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button"
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table"
-import type { Report } from "@/lib/types"
+import type { ReportSummary } from "@/lib/types"
 
-export function ReportList({ reports }: { reports: Report[] }) {
+export function ReportList({ reports }: { reports: ReportSummary[] }) {
   const [query, setQuery] = useState("")
   const filtered = query
     ? reports.filter((r) => r.id.includes(query))
@@ -45,8 +45,8 @@ export function ReportList({ reports }: { reports: Report[] }) {
               <TableCell>{r.id}</TableCell>
               <TableCell>{r.instanceCreatedAt || "-"}</TableCell>
               <TableCell>{new Date(r.createdAt).toLocaleString("zh-CN")}</TableCell>
-              <TableCell>{r.sessions?.length ?? 0}</TableCell>
-              <TableCell>{r.logs?.length ?? 0}</TableCell>
+              <TableCell>{r.sessionCount}</TableCell>
+              <TableCell>{r.logCount}</TableCell>
               <TableCell>
                 <Link href={`/reports/${r.id}`}>
                   <Button variant="outline" size="sm">查看</Button>
