@@ -6,7 +6,15 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const data = await req.json()
-  const summary = addReport(data)
-  return NextResponse.json(summary, { status: 201 })
+  console.log("[POST /api/report] 收到请求")
+  try {
+    const data = await req.json()
+    console.log("[POST /api/report] 解析完成, id:", data.id)
+    const summary = addReport(data)
+    console.log("[POST /api/report] 存储完成, id:", summary.id)
+    return NextResponse.json(summary, { status: 201 })
+  } catch (e) {
+    console.error("[POST /api/report] 错误:", e)
+    return NextResponse.json({ error: String(e) }, { status: 500 })
+  }
 }
